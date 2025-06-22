@@ -2,7 +2,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using Revistone.Console.Image;
 using Revistone.Management;
-
+using Revistone.Modules;
 using static Revistone.Console.Data.ConsoleData;
 
 namespace Revistone.Console.Rendering;
@@ -39,12 +39,12 @@ public static class QualityConsoleRenderer
     public static void RenderConsole()
     {
         StringBuilder outputAnsi = new();
+
         for (int i = 0; i < consoleLines.Length; i++)
         {
             if (consoleLines[i] == null || consoleLines[i].Updated) continue;
 
             consoleLines[i].Normalise();
-
             outputAnsi.Append($"\x1b[{i + 1};0H");
 
             for (int j = 0; j < consoleLines[i].LineText.Length; j++)

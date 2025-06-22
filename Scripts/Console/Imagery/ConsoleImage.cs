@@ -271,18 +271,24 @@ public class ConsoleImage
 
         if (fs.Length <= 8) return new ConsoleImage(); // will crash trying to read .cimg
 
-        if (reader.ReadString() != "CIMG")
+        if (new string(reader.ReadString()) != "CIMG")
         {
             DeveloperTools.Log($"Error: File At Path {filePath} Is Not A CIMG file.");
             return null;
         }
 
-        char versionNum = (char)reader.PeekChar();
-
+        char ver = (char)reader.PeekChar();
+        int versionNumber = 1;
+        if (ver == '2')
+        {
+            reader.ReadChar(); // read version number
+            versionNumber = 2;
+        }
+        
         int width = reader.ReadInt32();
         int height = reader.ReadInt32();
 
-        if (versionNum == '2')
+        if (versionNumber == 2) // version 2
         {
             char pixelChar = reader.ReadChar();
             byte[] pixelData = reader.ReadBytes(8);
@@ -299,7 +305,7 @@ public class ConsoleImage
                 {
                     pixelChar = reader.ReadChar();
                     pixelData = reader.ReadBytes(8);
-                    image.pixels[x, y] = new ConsolePixel(reader.ReadChar(),
+                    image.pixels[x, y] = new ConsolePixel(pixelChar,
                         new ConsoleColour(pixelData[0], pixelData[1], pixelData[2], pixelData[3]),
                         new ConsoleColour(pixelData[4], pixelData[5], pixelData[6], pixelData[7]));
                 }
@@ -307,7 +313,7 @@ public class ConsoleImage
 
             return image;
         }
-        else
+        else // version 1
         {
             ConsolePixel defaultPixel = new(reader.ReadChar(), new ConsoleColour((ConsoleColor)reader.ReadByte()), new ConsoleColour((ConsoleColor)reader.ReadByte()));
 

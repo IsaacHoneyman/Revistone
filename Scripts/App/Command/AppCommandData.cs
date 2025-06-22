@@ -8,6 +8,7 @@ using Revistone.Interaction;
 
 using static Revistone.Console.ConsoleAction;
 using static Revistone.Functions.ColourFunctions;
+using static Revistone.Functions.PersistentDataFunctions;
 
 namespace Revistone.App.Command;
 
@@ -128,6 +129,8 @@ public static class AppCommandsData
     public static void RenderTestCommand(string test)
     {
         int.TryParse(test, out int testNum);
+        
+        ConsoleColour[,] colours = new ConsoleColour[0, 0];
 
         switch (testNum)
         {
@@ -136,8 +139,8 @@ public static class AppCommandsData
                 SendConsoleMessage(new ConsoleLine(new string('X', 16), BaseColours, []));
                 break;
             case 2:
-                int size = 80;
-                ConsoleColour[,] colours = new ConsoleColour[size, size];
+                int size = 160;
+                colours = new ConsoleColour[size, size];
                 for (int y = 0; y < size; y++)
                 {
                     for (int x = 0; x < size; x++)
@@ -147,7 +150,12 @@ public static class AppCommandsData
                 }
                 ConsoleImage image = new(colours);
                 image.Output();
-                break; 
+                break;
+            case 3:
+                colours = LoadBmp(GeneratePath(DataLocation.ConsoleAssets, "BMP/Gradient128x128.bmp"));
+                ConsoleImage bmpImage = new(colours);
+                bmpImage.Output();
+                break;
             default:
                 ConsoleLine[] lines = [.. Enumerable.Range(0, 40).Select(i => new ConsoleLine(new string('a', 200), BaseColours.Repeat(13), BaseColours.Repeat(13)))];
                 ConsoleAnimatedLine[] animation = [.. Enumerable.Range(0, 40).Select(i => new ConsoleAnimatedLine(ConsoleAnimatedLine.ShiftColour, 5, true))];

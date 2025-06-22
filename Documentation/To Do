@@ -17,6 +17,7 @@ Leaving rendering test on for extended period on vscode version of console will 
 --- DONE ---
 Fixed crash when using page down to acess new empty file
 Fixed render test being unusable due to rename command
+Fixed weird extension of colours used for borders
 
 --- ADDED ---
 

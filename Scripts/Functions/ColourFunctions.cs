@@ -1,5 +1,7 @@
 using Revistone.Console.Image;
 using Revistone.Modules;
+using System.Drawing;
+
 using static Revistone.Console.Image.ConsoleColour;
 
 namespace Revistone.Functions;
@@ -71,6 +73,43 @@ public static class ColourFunctions
         return [.. c];
     }
 
+    ///<summary> Convert from BMP to ConsoleColour[]. </summary>
+    public static ConsoleColour[,] LoadBmp(string filePath)
+    {
+        using var fs = new FileStream(filePath, FileMode.Open, FileAccess.Read);
+        using var reader = new BinaryReader(fs);
+
+        // BMP header
+        reader.ReadBytes(18); // Skip to width/height
+        int width = reader.ReadInt32();
+        int height = reader.ReadInt32();
+
+        reader.ReadInt16(); // Planes
+        int bitsPerPixel = reader.ReadInt16();
+
+        if (bitsPerPixel != 24)
+            throw new NotSupportedException("Only 24-bit BMPs are supported.");
+
+        reader.ReadBytes(24); // Skip the rest of the header
+
+        ConsoleColour[,] colours = new ConsoleColour[width, height];
+
+        int rowPadding = (4 - (width * 3 % 4)) % 4;
+
+        for (int y = height - 1; y >= 0; y--) // BMPs are bottom-up
+        {
+            for (int x = 0; x < width; x++)
+            {
+                byte blue = reader.ReadByte();
+                byte green = reader.ReadByte();
+                byte red = reader.ReadByte();
+                colours[x, height - 1 - y] = new ConsoleColour(red, green, blue);
+            }
+            reader.ReadBytes(rowPadding); // Skip padding
+        }
+        return colours;
+    }
+
     ///<summary> Converts ConsoleColour[] To ConsoleColour[,]. </summary>
     public static ConsoleColour[,] To2DArray(this ConsoleColour[] colours, int width, ConsoleColour defaultColour)
     {
@@ -105,6 +144,38 @@ public static class ColourFunctions
         for (int i = 0; i < colours.Length; i++)
         {
             c = [.. c, .. colours[i]];
+        }
+
+        return c;
+    }
+
+    /// <summary> Generates a ConsoleColour[] from a base colour array, and highlight areas. </summary>
+    public static ConsoleColour[] Highlight(int length, ConsoleColour[] baseColours, params (ConsoleColour[] colours, int startIndex, int length)[] highlights)
+    {
+        if (baseColours.Length == 0) return baseColours;
+
+        ConsoleColour[] c = new ConsoleColour[length];
+
+        int baseIndex = 0, highlightIndex = -1;
+
+        for (int i = 0; i < length; i++)
+        {
+            for (int j = 0; j < highlights.Length; j++)
+            {
+                if (highlights[j].startIndex == i && highlights[j].colours.Length > 0) highlightIndex = j;
+            }
+
+            if (highlightIndex == -1) //base colours
+            {
+                c[i] = baseColours[baseIndex];
+                baseIndex = baseIndex < baseColours.Length - 1 ? baseIndex + 1 : 0;
+            }
+            else
+            {
+                (ConsoleColour[] colours, int startIndex, int length) h = highlights[highlightIndex];
+                c[i] = h.colours[(i - h.startIndex) % h.colours.Length];
+                if (h.startIndex + h.length <= i + 1) highlightIndex = -1;
+            }
         }
 
         return c;
@@ -281,157 +352,46 @@ public static class ColourFunctions
     }
 
     /// <summary> Generates a ConsoleColor array with cycing colours, changling every colourLength, for given length. </summary>
-    public static ConsoleColour[] VariableStretch(ConsoleColour[] colours, int length, int colourLength = 1)
+    public static ConsoleColour[] VariableStretch(this ConsoleColour[] colours, int length, int colourLength = 1)
     {
         return VariableStretch(colours, length, [colourLength]);
     }
 
-    // --- OLD STUFF ---
-
-    // --- NEW ARRAY ---
-
-    /// <summary> Generates a ConsoleColour[] from a base colour array, and highlight areas. </summary>
-    public static ConsoleColour[] Highlight(int length, ConsoleColour[] baseColours, params (ConsoleColour[] colours, int startIndex, int length)[] highlights)
+    ///<summary> Extends pattern of given array, to length. </summary>
+    public static ConsoleColour[] ExtendPattern(this ConsoleColour[] colours, int length, bool reverse)
     {
-        if (baseColours.Length == 0) return baseColours;
-
         ConsoleColour[] c = new ConsoleColour[length];
+        int increment = 1;
+        int colourIndex = 0;
 
-        int baseIndex = 0, highlightIndex = -1;
+        if (length <= colours.Length) return colours[..length];
+        if (length <= 1) return colours;
 
         for (int i = 0; i < length; i++)
         {
-            for (int j = 0; j < highlights.Length; j++)
-            {
-                if (highlights[j].startIndex == i && highlights[j].colours.Length > 0) highlightIndex = j;
-            }
+            c[i] = colours[colourIndex];
 
-            if (highlightIndex == -1) //base colours
+            colourIndex += increment;
+            if (colourIndex == -1) // to far left
             {
-                c[i] = baseColours[baseIndex];
-                baseIndex = baseIndex < baseColours.Length - 1 ? baseIndex + 1 : 0;
+                increment = 1;
+                colourIndex = 1;
             }
-            else
+            else if (colourIndex == colours.Length)
             {
-                (ConsoleColour[] colours, int startIndex, int length) h = highlights[highlightIndex];
-                c[i] = h.colours[(i - h.startIndex) % h.colours.Length];
-                if (h.startIndex + h.length <= i + 1) highlightIndex = -1;
+                if (reverse)
+                {
+                    increment = -1;
+                    colourIndex -= 2;
+                }
+                else
+                {
+                    colourIndex = 0;
+                }
+
             }
         }
 
         return c;
     }
-
-    // /// <summary> Generates a ConsoleColour array from a base colour array, highlight colour array, and highlight areas. </summary>
-    // public static ConsoleColor[] AdvancedHighlight(int length, ConsoleColor[] baseColour, ConsoleColor[] highlightColour, params (int startIndex, int length)[] highlights)
-    // {
-    //     (ConsoleColor[] colours, int startIndex, int length)[] highlightsColoured = new (ConsoleColor[], int, int)[highlights.Length];
-
-    //     for (int i = 0; i < highlights.Length; i++)
-    //     {
-    //         highlightsColoured[i] = (highlightColour, highlights[i].startIndex, highlights[i].length);
-    //     }
-
-    //     return AdvancedHighlight(length, baseColour.ToArray(), highlightsColoured);
-    // }
-
-    // /// <summary> Generates a ConsoleColour array from a base colour, highlight colour, and highlight areas. </summary>
-    // public static ConsoleColor[] AdvancedHighlight(int length, ConsoleColor baseColour, ConsoleColor highlightColour, params (int startIndex, int length)[] highlights) { return AdvancedHighlight(length, baseColour.ToArray(), highlightColour.ToArray(), highlights); }
-
-    // /// <summary> Generates a ConsoleColour array from a base colour, and highlight areas. </summary>
-    // public static ConsoleColor[] AdvancedHighlight(int length, ConsoleColor baseColour, params (ConsoleColor[] colours, int startIndex, int length)[] highlights) { return AdvancedHighlight(length, baseColour.ToArray(), highlights); }
-
-    // // <summary> Generates a ConsoleColour array from base colour array, and highlight words. </summary>
-    // public static ConsoleColor[] AdvancedHighlight(string text, ConsoleColor[] baseColours, params (ConsoleColor[] colours, int index)[] wordIndexes)
-    // {
-    //     List<(int startIndex, int length)> words = new List<(int startIndex, int length)>();
-
-    //     int wordStartIndex = -1;
-
-    //     for (int i = 0; i < text.Length; i++)
-    //     {
-    //         if (string.IsNullOrWhiteSpace(text[i].ToString()))
-    //         {
-    //             if (wordStartIndex != -1)
-    //             {
-    //                 words.Add((wordStartIndex, i - wordStartIndex));
-    //                 wordStartIndex = -1;
-    //             }
-    //         }
-    //         else if (wordStartIndex == -1)
-    //         {
-    //             wordStartIndex = i;
-    //         }
-    //     }
-
-    //     if (wordStartIndex != -1) words.Add((wordStartIndex, text.Length - wordStartIndex));
-
-    //     List<(ConsoleColor[] colours, int startIndex, int length)> indexes = new List<(ConsoleColor[] colours, int startIndex, int length)>();
-
-    //     for (int i = 0; i < words.Count; i++)
-    //     {
-    //         for (int j = 0; j < wordIndexes.Length; j++)
-    //         {
-    //             if (wordIndexes[j].index == i) indexes.Add((wordIndexes[j].colours, words[i].startIndex, words[i].length));
-    //         }
-    //     }
-
-    //     return AdvancedHighlight(text.Length, baseColours, indexes.ToArray());
-    // }
-
-    // /// <summary> Generates a ConsoleColour array from a base colour array, highlight colour array, and word indexes. </summary>
-    // public static ConsoleColor[] AdvancedHighlight(string text, ConsoleColor[] baseColour, ConsoleColor[] highlightColour, params int[] wordIndexes)
-    // {
-    //     (ConsoleColor[] colours, int index)[] highlightsColoured = new (ConsoleColor[], int)[wordIndexes.Length];
-
-    //     for (int i = 0; i < wordIndexes.Length; i++)
-    //     {
-    //         highlightsColoured[i] = (highlightColour, wordIndexes[i]);
-    //     }
-
-    //     return AdvancedHighlight(text, baseColour.ToArray(), highlightsColoured);
-    // }
-
-    // /// <summary> Generates a ConsoleColour array from a base colour, highlight colour, and word indexes. </summary>
-    // public static ConsoleColor[] AdvancedHighlight(string text, ConsoleColor baseColour, ConsoleColor highlightColour, params int[] wordIndexes) { return AdvancedHighlight(text, baseColour.ToArray(), highlightColour.ToArray(), wordIndexes); }
-
-    // // <summary> Generates a ConsoleColour array from base colour array, and highlight words. </summary>
-    // public static ConsoleColor[] AdvancedHighlight(string text, ConsoleColor baseColour, params (ConsoleColor[] colours, int index)[] wordIndexes) { return AdvancedHighlight(text, baseColour.ToArray(), wordIndexes); }
-
-    // /// <summary> Generates a ConsoleColor array colourising alternating words in provided string using given colours. </summary>
-    // public static ConsoleColor[] Alternate(string text, ConsoleColor[] colours)
-    // {
-    //     if (colours.Length == 0) return colours;
-
-    //     List<int> wordsCount = new List<int>();
-
-    //     int wordStartIndex = 0;
-    //     bool wordFinished = false;
-
-    //     string workText = text.TrimStart();
-
-    //     for (int i = 0; i < workText.Length; i++)
-    //     {
-    //         if (string.IsNullOrWhiteSpace(workText[i].ToString()))
-    //         {
-    //             wordFinished = true;
-    //         }
-    //         else if (wordFinished)
-    //         {
-    //             wordsCount.Add(i - wordStartIndex);
-    //             wordStartIndex = i;
-    //             wordFinished = false;
-    //         }
-    //     }
-
-    //     wordsCount.Add(workText.Length - wordStartIndex);
-
-    //     if (workText.Length != text.Length) wordsCount.Insert(0, text.Length - workText.Length);
-
-    //     return Alternate(colours, text.Length, wordsCount.ToArray());
-    // }
-
-    // /// <summary> Generates a ConsoleColor array with cycing colours, changling every colourLength, for given length. </summary>
-    // public static ConsoleColor[] Alternate(ConsoleColor[] colours, int length, int colourLength = 1)
-    // { return Alternate(colours, length, [colourLength]); }
 }

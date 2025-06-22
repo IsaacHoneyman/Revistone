@@ -17,7 +17,8 @@ public class RevistoneApp : App
 
     public override App[] OnRegister()
     {
-        return [ new RevistoneApp("Revistone", "Hub App For The Console.", (ConsoleColour.DarkBlue.ToArray(), ConsoleColour.Cyan.ToArray(), ConsoleColour.Blue.ToArray()), (BaseBorderColours.Stretch(3).SetLength(18), 5),
+        return [ new RevistoneApp("Revistone", "Hub App For The Console.", (ConsoleColour.DarkBlue.ToArray(), ConsoleColour.Cyan.ToArray(), ConsoleColour.Blue.ToArray()),
+            (CreateGradient(ConsoleColour.Cyan, ConsoleColour.DarkBlue, 18).ExtendPattern(37, true), 5),
                 [
                     new AppCommand(
                         new UserInputProfile(["boop!", "boop"], caseSettings: StringFunctions.CapitalCasing.Lower, removeWhitespace: true),
@@ -28,6 +29,7 @@ public class RevistoneApp : App
                 ],
                 98, 37) ];
     }
+    //BaseBorderColours.Stretch(3).SetLength(18)
 
     static bool firstOpen = true;
 
@@ -35,11 +37,11 @@ public class RevistoneApp : App
     {
         base.OnAppInitalisation();
 
-        ConsoleLine[] title = TitleFunctions.CreateTitle("REVISTONE", Highlight(97, ConsoleColour.DarkBlue.ToArray(), (ConsoleColour.Cyan.ToArray(), 0, 10), (ConsoleColour.Cyan.ToArray(), 48, 10)), TitleFunctions.AsciiFont.BigMoneyNW, letterSpacing: 1);
+        ConsoleLine[] title = TitleFunctions.CreateTitle("REVISTONE", CreateGradient(ConsoleColour.Cyan, ConsoleColour.DarkBlue, 18).ExtendPattern(37, true).Repeat(3), TitleFunctions.AsciiFont.BigMoneyNW, letterSpacing: 1);
 
         ConsoleAction.ShiftLine();
         ConsoleAction.SendConsoleMessages(title,
-        Enumerable.Repeat(new ConsoleAnimatedLine(ConsoleAnimatedLine.ShiftForegroundColour, "", AppRegistry.ActiveApp.borderColourScheme.speed, true), title.Length).ToArray());
+        Enumerable.Repeat(new ConsoleAnimatedLine(ConsoleAnimatedLine.ShiftForegroundColour, "", 2, true), title.Length).ToArray());
 
         ConsoleAction.ShiftLine();
 

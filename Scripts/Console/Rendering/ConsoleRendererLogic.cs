@@ -38,6 +38,7 @@ public static class ConsoleRendererLogic
     internal static void HandleConsoleRender()
     {
         Stopwatch frameDuration = new();
+        long frameDebt = 0;
 
         while (true)
         {
@@ -47,7 +48,7 @@ public static class ConsoleRendererLogic
             {
                 if (!(blockRender || consoleLines.Length < AppRegistry.ActiveApp.minHeightBuffer))
                 {
-                    if (useExperimentalRendering)
+                    if (use24BitColourRendering)
                     {
                         QualityConsoleRenderer.RenderConsole();
                     }
@@ -63,8 +64,12 @@ public static class ConsoleRendererLogic
 
             while (true)
             {
-                if (frameDuration.ElapsedTicks >= displayWindowsTickInterval) break;
+                if (frameDuration.ElapsedTicks >= displayWindowsTickInterval - frameDebt) break;
             }
+
+            if (frameDuration.ElapsedTicks >= displayWindowsTickInterval) frameDebt = frameDuration.ElapsedTicks - displayWindowsTickInterval;
+            else if (frameDebt > displayWindowsTickInterval) frameDebt -= displayWindowsTickInterval; // cant recover in one frame
+            else frameDebt = 0;
 
             Profiler.RenderTime.Add(frameDuration.ElapsedTicks);
 
@@ -165,7 +170,7 @@ public static class ConsoleRendererLogic
     {
         screenWarningUpdated = false;
 
-        if (useExperimentalRendering) QualityConsoleRenderer.Reload(); 
+        if (use24BitColourRendering) QualityConsoleRenderer.Reload();
         else PerformanceConsoleRenderer.Reload();
 
         primaryLineIndex = 1;
@@ -202,7 +207,7 @@ public static class ConsoleRendererLogic
             return;
         }
 
-        if (useExperimentalRendering) QualityConsoleRenderer.Reload(); 
+        if (use24BitColourRendering) QualityConsoleRenderer.Reload();
         else PerformanceConsoleRenderer.Reload();
 
         int debugDistanceFromEnd = consoleLines.Length - debugLineIndex;
@@ -267,7 +272,8 @@ public static class ConsoleRendererLogic
         string title = $" [{AppRegistry.ActiveApp.name}] ";
         int leftBuffer = Math.Max((int)Math.Floor((windowSize.width - title.Length) / 2f), 0);
         int rightBuffer = Math.Max((int)Math.Ceiling((windowSize.width - title.Length) / 2f), 0) - 1;
-        consoleLines[0].Update(new string('-', leftBuffer) + title + new string('-', rightBuffer), ColourFunctions.VariableStretch(AppRegistry.ActiveApp.borderColourScheme.colours, windowSize.width - 1));
+
+        consoleLines[0].Update(new string('-', leftBuffer) + title + new string('-', rightBuffer), ColourFunctions.Repeat(AppRegistry.ActiveApp.borderColourScheme.colours, (int)Math.Ceiling((windowSize.width - 1) / (double)AppRegistry.ActiveApp.borderColourScheme.colours.Length)));
         consoleLineUpdates[0].Update(new ConsoleAnimatedLine(ConsoleAnimatedLine.ShiftForegroundColour, "1", AppRegistry.ActiveApp.borderColourScheme.speed, true));
     }
 
@@ -277,7 +283,7 @@ public static class ConsoleRendererLogic
         if (consoleLines.Length < AppRegistry.ActiveApp.minHeightBuffer) return;
         exceptionLines[^8] = true;
         consoleLinesBuffer[^8].Update(""); //stops buffer width
-        consoleLines[^8].Update(GenerateConsoleBorderString(), ColourFunctions.VariableStretch(AppRegistry.ActiveApp.borderColourScheme.colours, windowSize.width - 1));
+        consoleLines[^8].Update(GenerateConsoleBorderString(), ColourFunctions.Repeat(AppRegistry.ActiveApp.borderColourScheme.colours, (int)Math.Ceiling((windowSize.width - 1) / (double)AppRegistry.ActiveApp.borderColourScheme.colours.Length)));
         consoleLineUpdates[^8].Update(new ConsoleAnimatedLine(UpdateConsoleBorderAnimation, "", 1, true));
     }
 

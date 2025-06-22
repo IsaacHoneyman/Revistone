@@ -24,7 +24,7 @@ public class FlashCardApp : App
     public override App[] OnRegister()
     {
         return [
-                new FlashCardApp("Flash Card Manager", "Pratice And Memorise Topics.", (ConsoleColour.DarkBlue.ToArray(), ConsoleColour.DarkGreen.ToArray(), ConsoleColour.Green.ToArray()), (VariableStretch([ConsoleColour.DarkGreen, ConsoleColour.DarkBlue], 6, 3), 5), [], 70, 40)
+                new FlashCardApp("Flash Card Manager", "Pratice And Memorise Topics.", (ConsoleColour.DarkBlue.ToArray(), ConsoleColour.DarkGreen.ToArray(), ConsoleColour.Green.ToArray()), (ColourFunctions.VariableStretch([ConsoleColour.DarkGreen, ConsoleColour.DarkBlue], 6, 3), 5), [], 70, 40)
             ];
     }
 

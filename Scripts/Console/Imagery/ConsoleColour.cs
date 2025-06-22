@@ -165,4 +165,22 @@ public class ConsoleColour
 
         EquivalentConsoleColor = colour;
     }
+
+    public override bool Equals(object? obj)
+    {
+        if (obj is not ConsoleColour other)
+            return false;
+
+        return this.R == other.R &&
+           this.G == other.G &&
+           this.B == other.B &&
+           this.TextStyleFlags == other.TextStyleFlags;
+
+
+    }
+
+    public override int GetHashCode()
+    {
+        return HashCode.Combine(R, G, B, TextStyleFlags);
+    }
 }

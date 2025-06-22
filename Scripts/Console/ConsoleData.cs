@@ -33,13 +33,13 @@ internal static class ConsoleData
 
     public static int widgetTickInterval;
     public static int analyticTickInterval;
-    public static double displayWindowsTickInterval;
+    public static long displayWindowsTickInterval;
 
     public static bool showDate;
     public static int maxWorkspacePathLength = 15;
     public static double counterWidget = 0;
 
-    public static bool useExperimentalRendering = false;
+    public static bool use24BitColourRendering = false;
 
     public static void InitalizeConsoleData()
     {
@@ -62,7 +62,7 @@ internal static class ConsoleData
                 analyticTickInterval = int.Parse(SettingsApp.GetValue("Analytics Update Frequency")[..^1]) * 40;
                 break;
             case "Target Frame Rate":
-                displayWindowsTickInterval = 1d / int.Parse(SettingsApp.GetValue("Target Frame Rate")) * Stopwatch.Frequency;
+                displayWindowsTickInterval = (long)Math.Ceiling(1d / int.Parse(SettingsApp.GetValue("Target Frame Rate")) * Stopwatch.Frequency);
                 break;
             case "Workspace Path Widget Collapsing":
                 var val = SettingsApp.GetValue("Workspace Path Widget Collapsing");

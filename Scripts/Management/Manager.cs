@@ -122,12 +122,11 @@ public static class Manager
 
         ConsoleWidget.InitializeWidgets(); // init border widgets
 
-        if (SettingsApp.GetValueAsBool("Use Experimental Rendering"))
+        if (SettingsApp.GetValueAsBool("Rendering Mode", "24-Bit Colour Rendering"))
         {
-            ConsoleData.useExperimentalRendering = true;
-            DeveloperTools.Log("Initializing Quality Renderer.");
+            ConsoleData.use24BitColourRendering = true;
+            DeveloperTools.Log("Initializing 24-Bit Colour Renderer.");
             QualityConsoleRenderer.InitializeRenderer();
-            PerformanceConsoleRenderer.InitializeRenderer(); // TEMP
         }
         else
         {

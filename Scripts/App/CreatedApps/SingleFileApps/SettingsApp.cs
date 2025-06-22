@@ -89,7 +89,9 @@ public class SettingsApp : App
             "Should GPT Use A Detailed System Promt, Giving It Details And Info About The Revistone Console, More Token Intensive.", "Yes", YesNoOpt, SettingCategory.ChatGPT),
         // --- PERFORMANCE SETTINGS ---
         new DropdownSetting("Target Frame Rate",
-            "The Number Of Times The Console Will Render A Second. Using A Frame Rate Faster Than Your Monitors Refresh Rate Will Actually Slightly Slow Done Responsiveness.", "120", ["30", "60", "75", "90", "120", "144", "240"], SettingCategory.Performance),
+            "The Number Of Times The Console Will Render A Second. Using A Frame Rate Faster Than Your Monitors Refresh Rate Will Actually Slightly Slow Done Responsiveness.", "120", ["30", "60", "75", "90", "120", "144", "240", "360", "480"], SettingCategory.Performance),
+        new DropdownSetting("Rendering Mode",
+            "What Mode Should The Console Use For Rendering? 24 Bit Colour Offers 16,777,216 Compared To The Console Default 16, But Comes At A SIGNIFICANT Performance Cost.", "24-Bit Colour Rendering", ["24-Bit Colour Rendering", "Performance Rendering"], SettingCategory.Performance, true),
         new DropdownSetting("Analytics Update Frequency",
             "How Often Should Analytics Update? (Can Effect Performance On Low End Devices, Very Frequent Settings Should Only Be Used For Debugging).", "180s", ["10s", "60s", "120s", "180s", "300s", "600s"], SettingCategory.Performance),
         new DropdownSetting("Widget Update Frequency",
@@ -111,9 +113,7 @@ public class SettingsApp : App
         new DropdownSetting("Force Default Settings",
             "Override All Settings With Default Value.", "No", YesNoOpt, SettingCategory.Developer),
         new DropdownSetting("Create Log File",
-            "Should HoneyC Programs Create A Program Log File?", "No", YesNoOpt, SettingCategory.Developer),
-        new DropdownSetting("Use Experimental Rendering",
-            "Should Experimental Full Colour Renering Be Used?", "No", YesNoOpt, SettingCategory.Developer, true),
+            "Should HoneyC Programs Create A Program Log File?", "No", YesNoOpt, SettingCategory.Developer)
     ];
 
     public SettingsApp() : base() { }

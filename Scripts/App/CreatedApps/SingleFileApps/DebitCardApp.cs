@@ -21,7 +21,7 @@ public class DebitCardApp : App
 
     public override App[] OnRegister()
     {
-        return [ new DebitCardApp("Debit Card Manager", "The First Ever Console App (Useless But History).", (ConsoleColour.DarkBlue.ToArray(), ConsoleColour.Magenta.ToArray(), ConsoleColour.Blue.ToArray()), (VariableStretch([ConsoleColour.Magenta, ConsoleColour.DarkBlue], 6, 3), 5),
+        return [ new DebitCardApp("Debit Card Manager", "The First Ever Console App (Useless But History).", (ConsoleColour.DarkBlue.ToArray(), ConsoleColour.Magenta.ToArray(), ConsoleColour.Blue.ToArray()), (ColourFunctions.VariableStretch([ConsoleColour.Magenta, ConsoleColour.DarkBlue], 6, 3), 5),
                 [], 94) ];
     }
 
@@ -362,7 +362,7 @@ public class DebitCardApp : App
         /// <summary> Displays card in console </summary>
         public void DisplayCard(bool censored = false)
         {
-            ConsoleColour[] c = VariableStretch([.. accountColours], 60, 2);
+            ConsoleColour[] c = ColourFunctions.VariableStretch([.. accountColours], 60, 2);
             string s = $"{(masterCard ? "Mastercard" : "Visa")} {(contactless ? "- Contactless" : "")}", s2 = $"Honeycomb Bank [{(censored ? "******" : accountType)} Account]  |";
 
             string[] cardLines = [

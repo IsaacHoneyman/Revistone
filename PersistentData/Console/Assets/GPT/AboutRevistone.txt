@@ -11,6 +11,8 @@ General Hotkeys:
 - Ctrl + Shift + P -> Toggles Profiler.
 - F11 -> Takes A Screenshot Of The Debug Console.
 - F12 -> Takes A Screenshot Of The Primary Console.
+- Alt + + -> Increments Counter Widget.
+- Alt + - -> Decrements Counter Widget.
 
 Input Hotkeys:
 - Up Arrow -> Jump To Previous Element In Input
@@ -76,8 +78,8 @@ Settings [- Name -> Description]:
 - Show Author Widget -> Should The Author Widget Be Shown?
 - Show Time Widget -> Should The Time Widget Be Shown?
 - Show Workspace Path Widget -> Should The Workspace Path Widget Be Shown?
-- Workspace Path Widget Collapsing -> Collapse Workspace Path Widget To Save Space On The Border Bar
-- API Key -> ChatGPT API Key (I Promise I Don't Steal This Data - The Project Is Open Source Just Check!)
+- Workspace Path Widget Collapsing -> Collapse Workspace Path Widget To Save Space On The Border Bar.
+- API Key -> ChatGPT API Key, This Data Is Only Stored Locally.
 - Behaviour -> Additional Promt Given To Dictate GPT Behaviour.
 - Scenario -> Additonal Promt Given To Setup GPT Scenario.
 - Conversation Memory -> How Many Previous Messages In The Conversation Should GPT Remember? (This Has A Large Effect On Token Usage).
@@ -88,6 +90,7 @@ Settings [- Name -> Description]:
 - Welcome Message -> GPT Will Send A Message Upon Console Startup (Will Increase Inital Load Time).
 - Use Detailed System Promt -> Should GPT Use A Detailed System Promt, Giving It Details And Info About The Revistone Console, More Token Intensive.
 - Target Frame Rate -> The Number Of Times The Console Will Render A Second. Using A Frame Rate Faster Than Your Monitors Refresh Rate Will Actually Slightly Slow Done Responsiveness.
+- Rendering Mode -> What Mode Should The Console Use For Rendering? 24 Bit Colour Offers 16,777,216 Compared To The Console Default 16, But Comes At A SIGNIFICANT Performance Cost.
 - Analytics Update Frequency -> How Often Should Analytics Update? (Can Effect Performance On Low End Devices, Very Frequent Settings Should Only Be Used For Debugging).
 - Widget Update Frequency -> How Often Should Widgets Update? (Can Effect Performance On Low End Devices, But Lower Settings Will Make Widgets Appear Laggy).
 - Show Emojis -> Can Emojis Be Used In The Program (Certain Emojis Cause The Console To Misrender, Requiring A Reload To Fix).
@@ -116,6 +119,8 @@ Commands [- Name [Type] -> Description]:
 - Clear GPT [ChatGPT] -> Wipe Message History Of ChatGPT Model.
 - Remember GPT [Message] [ChatGPT] -> Store A Permeant Memory To GPT.
 - Memories GPT [ChatGPT] -> View List Of GPT Memories.
+- Last GPT [ChatGPT] -> View Last Message From GPT.
+- View GPT [Number Of Messages] [ChatGPT] -> View Given Number Of Previous Messages From GPT.
 - Set Setting [Setting] [Apps] -> Set The Value Of Given Setting.
 - Get Setting [Setting] [Apps] -> Get The Value Of Given Setting.
 - Time [Console] -> Displays The Current System Time.
@@ -142,6 +147,9 @@ Commands [- Name [Type] -> Description]:
 - Stopwatch [Widget] -> Creates A Stopwatch.
 - Cancel Stopwatch [Widget] -> Removes Active Stopwatch.
 - Toggle Stopwatch [Widget] -> Pauses Or Unpauses Stopwatch.
+- Counter [Widget] -> Create Counter Widget.
+- Remove Counter [Widget] -> Removes Counter Widget.
+- Counter Add [Amount] [Widget] -> Add Given Amount To Counter
 - Quit [Console] -> Closes The Revistone Terminal.
 - Kill [Console] -> Force Closes The Revistone Terminal (Crashes It).
 - Screenshots [Apps] -> Load Screenshots App.
@@ -159,5 +167,5 @@ Commands [- Name [Type] -> Description]:
 - Tip [Console] -> Displays A Random Console Tip.
 - Tips [Console] -> Displays List Of Console Tips.
 - Tick Event [Developer] -> Displays All Methods Invoked By Tick Event.
-- Render Test [Developer] -> Displays Render Stress Test For The Console.
+- Graphics Test [Test] [Developer] -> Displays Graphics Test For The Console.
 - Gen Revistone About [Developer] -> Generates A File For The GPT Model To Use As About Information.

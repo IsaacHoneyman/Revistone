@@ -30,7 +30,6 @@ public class SettingsApp : App
         "Settings About Interaction With The Console.", // Input
         "Settings About The Consoles Appearance.", // Appearance
         "Settings About Revistone Custom ChatGPT Model.", // ChatGPT
-        "Settings About Spotify Interaction Within The Console.", // Spotify
         "Settings That Effect Console Performance.", // Performance
         "Settings For Developers, And To Debug The Console. These Settings Will Only Apply If In Developer Mode, Else Default Values Are Used.", // Developer
     ];

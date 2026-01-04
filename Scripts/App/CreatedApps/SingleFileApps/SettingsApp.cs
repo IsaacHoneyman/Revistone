@@ -8,7 +8,7 @@ using static Revistone.Functions.ColourFunctions;
 using static Revistone.Console.ConsoleAction;
 using static Revistone.App.BaseApps.SettingsApp.Setting;
 using static Revistone.Functions.PersistentDataFunctions;
-using System.Dynamic;
+
 using Revistone.Console.Image;
 
 namespace Revistone.App.BaseApps;
@@ -30,6 +30,7 @@ public class SettingsApp : App
         "Settings About Interaction With The Console.", // Input
         "Settings About The Consoles Appearance.", // Appearance
         "Settings About Revistone Custom ChatGPT Model.", // ChatGPT
+        "Settings About Spotify Interaction Within The Console.", // Spotify
         "Settings That Effect Console Performance.", // Performance
         "Settings For Developers, And To Debug The Console. These Settings Will Only Apply If In Developer Mode, Else Default Values Are Used.", // Developer
     ];
@@ -65,10 +66,10 @@ public class SettingsApp : App
         new DropdownSetting("Show Workspace Path Widget",
             "Should The Workspace Path Widget Be Shown?", "Yes", YesNoOpt, SettingCategory.Appearance),
         new DropdownSetting("Workspace Path Widget Collapsing",
-            "Collapse Workspace Path Widget To Save Space On The Border Bar", "30", ["No", "15", "30", "50", "75", "100"], SettingCategory.Appearance),
+            "Collapse Workspace Path Widget To Save Space On The Border Bar.", "30", ["No", "15", "30", "50", "75", "100"], SettingCategory.Appearance),
         // --- CHATGPT SETTINGS ---
         new InputSetting("API Key",
-            "ChatGPT API Key (I Promise I Don't Steal This Data - The Project Is Open Source Just Check!)", "", new UserInputProfile(canBeEmpty: true), SettingCategory.ChatGPT),
+            "ChatGPT API Key, This Data Is Only Stored Locally.", "", new UserInputProfile(canBeEmpty: true), SettingCategory.ChatGPT),
         new InputSetting("Behaviour",
             "Additional Promt Given To Dictate GPT Behaviour.", "", new UserInputProfile(canBeEmpty: true), SettingCategory.ChatGPT),
         new InputSetting("Scenario",
